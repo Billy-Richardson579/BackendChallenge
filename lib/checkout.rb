@@ -13,6 +13,14 @@ class Checkout
     basket << item.to_sym
   end
 
+  private
+
+def calculate_base_total
+  @basket.inject(0) do |sum, item|
+    sum + prices.fetch(item, 0)  # Fetch price or default to 0 if not found
+  end
+end
+
   def total
     total = 0
 
