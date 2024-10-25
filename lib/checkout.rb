@@ -13,15 +13,21 @@ class Checkout
     basket << item.to_sym
   end
 
+  def total
+    total = calculate_base_total
+    total = apply_discounts(total)  # Ensure total is updated after applying discounts
+    total
+  end
+
   private
 
-def calculate_base_total
-  @basket.inject(0) do |sum, item|
-    sum + prices.fetch(item, 0)  # Fetch price or default to 0 if not found
+  def calculate_base_total
+    @basket.inject(0) do |sum, item|
+      sum + prices.fetch(item, 0)  # Fetch price or default to 0 if not found
+    end
   end
-end
 
-  def total
+  def apply_discounts(total)
     total = 0
 
     basket.inject(Hash.new(0)) { |items, item| items[item] += 1; items }.each do |item, count|
