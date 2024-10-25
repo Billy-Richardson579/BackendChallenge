@@ -28,31 +28,15 @@ class Checkout
   end
 
   def apply_discounts(total)
-    total = 0
-
-    basket.inject(Hash.new(0)) { |items, item| items[item] += 1; items }.each do |item, count|
-      if item == :apple || item == :pear
-        if (count % 2 == 0)
-          total += prices.fetch(item) * (count / 2)
-        else
-          total += prices.fetch(item) * count
-        end
-      elsif item == :banana || item == :pineapple
-        if item == :pineapple
-          total += (prices.fetch(item) / 2)
-          total += (prices.fetch(item)) * (count - 1)
-        else
-          total += (prices.fetch(item) / 2) * count
-        end
-      elsif item == :mango
-        discount = count / 4  # 1 free for every 3 bought
-        total += prices.fetch(item) * (count - discount)  # Subtract the free Mangos from total
-      else
-        total += prices.fetch(item) * count
+    @basket.uniq.each do |item|
+      discount = @discount_db.get_discount(item)  # Get discount for the item
+      if discount && discount[:type] == 'two_for_1'
+        item_count = @basket.count(item)
+        free_items = item_count / 2
+        total -= prices.fetch(item) * free_items  # Subtract the value of free items
       end
     end
-
-    total
+    total  # Return the updated total
   end
 
   private
