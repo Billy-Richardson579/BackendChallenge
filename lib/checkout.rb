@@ -27,6 +27,9 @@ class Checkout
         else
           total += (prices.fetch(item) / 2) * count
         end
+      elsif item == :mango
+        discount = count / 4  # 1 free for every 3 bought
+        total += prices.fetch(item) * (count - discount)  # Subtract the free Mangos from total
       else
         total += prices.fetch(item) * count
       end
